@@ -1,0 +1,22 @@
+{
+    "name": "polymorphine/cs",
+    "description": "PHP-CS-Fixer standards for Polymorphine library",
+    "type": "library",
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^7.1",
+        "friendsofphp/php-cs-fixer": "^2.10"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shudd3r",
+            "email": "q3.shudder@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Polymorphine\\CodeStandards\\": "src/"
+        }
+    }
+}
