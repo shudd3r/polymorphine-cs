@@ -23,11 +23,11 @@ use SplFileInfo;
 final class DoubleLineAfterImportsFixer implements DefinedFixerInterface
 {
     public function getName() {
-        return 'PolymorphineCS/double_line_after_imports';
+        return 'Polymorphine/double_line_after_imports';
     }
 
     public function isCandidate(Tokens $tokens) {
-        return $tokens->isAnyTokenKindsFound([T_USE, T_CLASS]);
+        return $tokens->isTokenKindFound(T_USE) && $tokens->isAnyTokenKindsFound([T_TRAIT, T_INTERFACE, T_CLASS]);
     }
 
     public function getDefinition() {
@@ -84,7 +84,7 @@ final class Example
     }
 
     public function getPriority(): int {
-        return 0;
+        return -40;
     }
 
     public function fix(SplFileInfo $file, Tokens $tokens) {

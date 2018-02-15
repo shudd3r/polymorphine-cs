@@ -22,11 +22,11 @@ use SplFileInfo;
 final class BraceAfterFunctionFixer implements DefinedFixerInterface
 {
     public function getName() {
-        return 'PolymorphineCS/brace_after_function';
+        return 'Polymorphine/brace_after_method';
     }
 
     public function isCandidate(Tokens $tokens) {
-        return $tokens->isAnyTokenKindsFound([T_CLASS, T_FUNCTION]);
+        return $tokens->isAllTokenKindsFound([T_CLASS, T_FUNCTION]);
     }
 
     public function getDefinition() {
@@ -57,7 +57,7 @@ final class Example
     }
 
     public function getPriority(): int {
-        return -30;
+        return -40;
     }
 
     public function fix(SplFileInfo $file, Tokens $tokens) {

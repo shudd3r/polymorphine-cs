@@ -27,7 +27,10 @@ EOF;
 
     protected static $rules = [
         '@PSR2'                                 => true,
+        '@Symfony'                              => true,
         'single_line_after_imports'             => false,
+        'braces'                                => ['allow_single_line_closure' => true],
+        'cast_spaces'                           => true,
         'align_multiline_comment'               => true,
         'array_syntax'                          => ['syntax' => 'short'],
         'blank_line_before_statement'           => true,
@@ -48,6 +51,7 @@ EOF;
             'tokens' => [
                 'break',
                 'continue',
+                'extra',
                 'return',
                 'throw',
                 'parenthesis_brace_block',
@@ -76,8 +80,8 @@ EOF;
         'strict_comparison'                     => true,
         'strict_param'                          => true,
         'yoda_style'                            => null,
-        'PolymorphineCS/double_line_after_imports'     => true,
-        'PolymorphineCS/brace_after_function'          => true
+        'Polymorphine/double_line_after_imports' => true,
+        'Polymorphine/brace_after_method'       => true
     ];
 
     public static function createFor(string $packageName, string $workingDir) {
@@ -87,7 +91,7 @@ EOF;
             ->setRiskyAllowed(true)
             ->setRules(self::$rules)
             ->setFinder(PhpCsFixer\Finder::create()->in($workingDir))
-            ->setCacheFile(__DIR__.'/build/.php_cs.cache')
+            ->setUsingCache(false)
             ->registerCustomFixers([
                 new DoubleLineAfterImportsFixer(),
                 new BraceAfterFunctionFixer()
