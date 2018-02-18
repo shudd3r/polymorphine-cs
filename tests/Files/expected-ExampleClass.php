@@ -21,7 +21,7 @@ final class ExampleClass implements SomeInterface
     const CONSTANT = 'string';
     public $field = [
         'key' => 1,
-        'other' => 'value',
+        'other' => 'value'
     ];
     private $variable;
     private $bool = true;
