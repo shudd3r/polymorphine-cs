@@ -7,20 +7,17 @@ use PHPUnit\Framework\TestCase;
 
 class FileFixerTest extends TestCase
 {
-    protected $tmpFile;
-
-    public function tearDown() {
-        if (file_exists($this->tmpFile)) { unlink($this->tmpFile); }
-    }
-
     private function fixFile($file) {
-        $this->tmpFile = dirname(__DIR__) . '/temp/fixed.php';
-        copy($file, $this->tmpFile);
+        $tmpFilename = substr(basename($file), strpos(basename($file), '-') + 1);
+        $tmpFile = dirname(__DIR__) . '/temp/' . $tmpFilename;
+        copy($file, $tmpFile);
         $executable = dirname(__DIR__) . '/vendor/friendsofphp/php-cs-fixer/php-cs-fixer';
         $config = dirname(__DIR__) . '/php_cs.dist';
-        $command = 'fix -v --config=' . $config .' --using-cache=no --path-mode=intersection "' . $this->tmpFile . '"';
+        $command = 'fix -v --config=' . $config .' --using-cache=no --path-mode=intersection "' . $tmpFile . '"';
         echo shell_exec('php ' . $executable . ' ' . $command);
-        return $this->tmpFile;
+        $fixed = file_get_contents($tmpFile);
+        unlink($tmpFile);
+        return $fixed;
     }
 
     /**
@@ -29,8 +26,7 @@ class FileFixerTest extends TestCase
      * @param $given
      */
     public function testFixedFiles_MatchExpectations($expected, $given) {
-        $temp = $this->fixFile($given);
-        $result = file_get_contents($temp);
+        $result = $this->fixFile($given);
         $this->assertSame(file_get_contents($expected), $result);
     }
 
