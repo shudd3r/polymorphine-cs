@@ -96,7 +96,8 @@ EOF;
         'yoda_style' => false,
         'Polymorphine/double_line_before_class_definition' => true,
         'Polymorphine/brace_after_method' => true,
-        'Polymorphine/no_trailing_comma_after_multiline_array' => true
+        'Polymorphine/no_trailing_comma_after_multiline_array' => true,
+        'Polymorphine/static_named_constructors_before_construct' => true
     ];
 
     public static function createFor(string $packageName, string $workingDir) {
@@ -110,7 +111,8 @@ EOF;
             ->registerCustomFixers([
                 new DoubleLineBeforeClassDefinitionFixer(),
                 new BraceAfterFunctionFixer(),
-                new NoTrailingCommaInMultilineArrayFixer()
+                new NoTrailingCommaInMultilineArrayFixer(),
+                new StaticNamedConstructorsBeforeConstructFixer()
             ]);
     }
 }

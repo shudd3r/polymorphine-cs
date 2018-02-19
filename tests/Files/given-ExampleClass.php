@@ -39,9 +39,13 @@ final class MyClass
             : $this->variable;
     }
 
+    public static function fromArray(array $arr): self {
+        return new self(implode('.', $arr));
+    }
+
     public function Fixer(
         ArraySyntaxFixer $fixer, Library $library) {
-        $this->field = $fixer;
+        $this->field = function () use ($fixer) { return $this->getVar(); };
         $this->variable = $library;
         return;
     }

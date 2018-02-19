@@ -26,6 +26,10 @@ final class ExampleClass implements SomeInterface
     private $variable;
     private $bool = true;
 
+    public static function fromArray(array $arr): self {
+        return new self(implode('.', $arr));
+    }
+
     public function __construct(string $variable = '') {
         $this->variable = $variable;
     }
@@ -40,7 +44,7 @@ final class ExampleClass implements SomeInterface
         ArraySyntaxFixer $fixer,
         Library $library
     ) {
-        $this->field = $fixer;
+        $this->field = function () use ($fixer) { return $this->getVar(); };
         $this->variable = $library;
     }
 
