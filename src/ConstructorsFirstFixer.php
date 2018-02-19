@@ -26,22 +26,27 @@ final class ConstructorsFirstFixer extends AbstractFixer
     }
 
     public function getPriority() {
-        //assume fixed method spacing
+        //assumed one line method spacing
         return -40;
     }
 
     public function getDefinition() {
         return new FixerDefinition(
             'Constructors should be placed before other methods.',
-            [new CodeSample("<?php...")]
+            [
+                new CodeSample("<?php\nclass MyClass\n{\n    private \$property;\n\n    public function doSomething() {\n    }\n\n    public function __construct() {\n    }"),
+                new CodeSample("<?php\nclass MyClass\n{\n    public function __construct() {\n    }\n\n    public function doSomething() {\n    }\n\n    public static function createWithArray() {\n    }\n}")
+            ]
         );
     }
 
     public function isCandidate(Tokens $tokens) {
-        return $tokens->isAnyTokenKindsFound([T_STATIC]);
+        return $tokens->isAnyTokenKindsFound([T_CLASS]);
     }
 
     protected function applyFix(\SplFileInfo $file, Tokens $tokens) {
+        $this->constructors = [];
+
         if ($mainConstructor = $this->getConstructorIdx($tokens)) {
             $this->extractMethod($mainConstructor, $tokens);
         }
