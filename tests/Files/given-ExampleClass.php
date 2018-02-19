@@ -28,6 +28,10 @@ final class MyClass
         if (empty($this->variable)) { $this->variable = 'empty!'; }
         return $this->variable;
     }
+
+    public static function withHelloString() {
+        return new self('Hello World!');
+    }
     private function getVar2() {
         empty($this->variable) or $this->variable = 'empty!';
         return $this->variable;
@@ -37,9 +41,7 @@ final class MyClass
         return empty($this->variable)
             ? (string)$this->variable = 'empty!'.'string'
             : $this->variable;
-    }
-
-    public static function fromArray(array $arr): self {
+    }public static function fromArray(array $arr): self {
         return new self(implode('.', $arr));
     }
 
