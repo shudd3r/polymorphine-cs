@@ -60,7 +60,7 @@ final class ExampleClass implements SomeInterface
         return $this->variable;
     }
 
-    private function getVar2() {
+    protected function getVar2() {
         empty($this->variable) or $this->variable = 'empty!';
 
         return $this->variable;

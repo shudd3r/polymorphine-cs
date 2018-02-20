@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * This file is part of Polymorphine/CodeStandards package.
  *
  * (c) Shudd3r <q3.shudder@gmail.com>
@@ -33,17 +33,7 @@ final class BraceAfterFunctionFixer implements DefinedFixerInterface
         return new FixerDefinition(
             'Method definition opening brace MUST go on same line.',
             [
-                new CodeSample(
-                    '<?php
-
-final class Example
-{
-    public function example() 
-    {
-    }
-}
-'
-                )
+                new CodeSample("<?php\n\nfinal class Example\n{\n    public function example()\n    {\n    }\n}")
             ]
         );
     }

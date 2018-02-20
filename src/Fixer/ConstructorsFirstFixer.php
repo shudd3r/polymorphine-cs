@@ -52,7 +52,9 @@ final class ConstructorsFirstFixer extends AbstractFixer
             $this->getSequenceStartId([[T_PUBLIC], [T_ABSTRACT], [T_FUNCTION]], $tokens)
         ]) + [0]);
 
-        if (!$firstMethod) { return; }
+        if (!$firstMethod) {
+            return;
+        }
 
         if ($mainConstructor = $this->getConstructorIdx($tokens)) {
             $this->extractMethod($mainConstructor, $tokens);
@@ -80,7 +82,10 @@ final class ConstructorsFirstFixer extends AbstractFixer
 
     private function getConstructorIdx(Tokens $tokens, $idx = 0) {
         $start = $this->getSequenceStartId([[T_PUBLIC], [T_FUNCTION], [T_STRING]], $tokens, $idx);
-        if (!$start) { return null; }
+
+        if (!$start) {
+            return null;
+        }
 
         if ($tokens[$start + 4]->getContent() !== '__construct') {
             return $this->getConstructorIdx($tokens, $start + 5);
@@ -91,6 +96,7 @@ final class ConstructorsFirstFixer extends AbstractFixer
 
     private function getSequenceStartId(array $sequence, Tokens $tokens, $idx = 0) {
         $sequence = $tokens->findSequence($sequence, $idx);
+
         return ($sequence) ? array_keys($sequence)[0] : null;
     }
 }

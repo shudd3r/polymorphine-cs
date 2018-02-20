@@ -87,7 +87,7 @@ EOF;
         'pow_to_exponentiation' => true,
         'psr4' => true,
         'semicolon_after_instruction' => true,
-        'simplified_null_return' => true,
+        'simplified_null_return' => false,
         'single_line_comment_style' => true,
         'strict_comparison' => true,
         'strict_param' => true,

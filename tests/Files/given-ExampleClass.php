@@ -32,7 +32,7 @@ final class MyClass
     public static function withHelloString() {
         return new self('Hello World!');
     }
-    private function getVar2() {
+    protected function getVar2() {
         empty($this->variable) or $this->variable = 'empty!';
         return $this->variable;
     }
