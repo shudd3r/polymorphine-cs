@@ -47,6 +47,13 @@ final class ConstructorsFirstFixer extends AbstractFixer
     protected function applyFix(\SplFileInfo $file, Tokens $tokens) {
         $this->constructors = [];
 
+        $firstMethod = min(array_filter([
+            $this->getSequenceStartId([[T_PUBLIC], [T_FUNCTION]], $tokens),
+            $this->getSequenceStartId([[T_PUBLIC], [T_ABSTRACT], [T_FUNCTION]], $tokens)
+        ]) + [0]);
+
+        if (!$firstMethod) { return; }
+
         if ($mainConstructor = $this->getConstructorIdx($tokens)) {
             $this->extractMethod($mainConstructor, $tokens);
         }
@@ -56,11 +63,6 @@ final class ConstructorsFirstFixer extends AbstractFixer
             $this->extractMethod($staticIdx, $tokens);
             $idx = $staticIdx + 5;
         }
-
-        $firstMethod = min(array_filter([
-            $this->getSequenceStartId([[T_PUBLIC], [T_FUNCTION]], $tokens),
-            $this->getSequenceStartId([[T_PUBLIC], [T_ABSTRACT], [T_FUNCTION]], $tokens)
-        ]));
 
         $tokens->insertAt($firstMethod, Tokens::fromArray($this->constructors));
     }
