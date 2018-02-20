@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Polymorphine\CodeStandards;
+namespace Polymorphine\CodeStandards\Fixer;
 
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;

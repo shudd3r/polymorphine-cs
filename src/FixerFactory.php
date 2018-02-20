@@ -109,10 +109,10 @@ EOF;
             ->setFinder(PhpCsFixer\Finder::create()->in($workingDir))
             ->setUsingCache(false)
             ->registerCustomFixers([
-                new DoubleLineBeforeClassDefinitionFixer(),
-                new BraceAfterFunctionFixer(),
-                new NoTrailingCommaInMultilineArrayFixer(),
-                new ConstructorsFirstFixer()
+                new Fixer\DoubleLineBeforeClassDefinitionFixer(),
+                new Fixer\BraceAfterFunctionFixer(),
+                new Fixer\NoTrailingCommaInMultilineArrayFixer(),
+                new Fixer\ConstructorsFirstFixer()
             ]);
     }
 }
