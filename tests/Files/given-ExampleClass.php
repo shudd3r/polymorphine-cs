@@ -7,8 +7,14 @@ use Another\Unused\Lib;
 use PhpCsFixer\Fixer\ArrayNotation\ArraySyntaxFixer;
 
 
-
-final class MyClass
+/**
+ * Class MyClass summary
+ *
+ * Description hrere....
+ *
+ * @package Vendor\Package\Name
+ */
+abstract class MyClass
  implements SomeInterface {
 
     const CONSTANT = 'string';
@@ -28,7 +34,7 @@ final class MyClass
         if (empty($this->variable)) { $this->variable = 'empty!'; }
         return $this->variable;
     }
-
+    public abstract function somethingAbstract();
     public static function withHelloString() {
         return new self('Hello World!');
     }
@@ -36,6 +42,7 @@ final class MyClass
         empty($this->variable) or $this->variable = 'empty!';
         return $this->variable;
     }
+
 
     public function GetVariable() {
         return empty($this->variable)

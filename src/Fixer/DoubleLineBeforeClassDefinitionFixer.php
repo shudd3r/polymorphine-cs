@@ -55,16 +55,22 @@ final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterfac
     }
 
     public function fix(SplFileInfo $file, Tokens $tokens) {
-        $idx = $tokens->getNextTokenOfKind(0, [[T_FINAL], [T_ABSTRACT], [T_CLASS], [T_INTERFACE], [T_TRAIT]]) - 1;
-
-        while ($tokens[$idx]->isComment()) {
-            $idx--;
+        $start = $tokens->getNextTokenOfKind(0, [[T_CLASS], [T_INTERFACE], [T_TRAIT]]);
+        $idx = $tokens->getPrevMeaningfulToken($start);
+        if ($tokens[$idx]->isGivenKind([T_FINAL, T_ABSTRACT])) {
+            $start = $idx;
+            $idx = $tokens->getPrevMeaningfulToken($idx);
         }
 
-        if (!$tokens[$idx]->isWhitespace()) {
-            $tokens->insertAt($idx, new Token([T_WHITESPACE, self::DOUBLE_EMPTY]));
-        } elseif ($tokens[$idx]->getContent() !== self::DOUBLE_EMPTY) {
-            $tokens[$idx] = new Token([T_WHITESPACE, self::DOUBLE_EMPTY]);
+        $idx++;
+        $tokens->insertAt($idx, new Token([T_WHITESPACE, self::DOUBLE_EMPTY]));
+
+        $idx++;
+        while ($idx < $start) {
+            if ($tokens[$idx]->isWhitespace()) {
+                $tokens->clearAt($idx);
+            }
+            $idx++;
         }
     }
 }

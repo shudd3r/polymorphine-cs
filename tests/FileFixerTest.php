@@ -12,7 +12,7 @@ class FileFixerTest extends TestCase
         $tmpFile = dirname(__DIR__) . '/temp/' . $tmpFilename;
         copy($file, $tmpFile);
         $executable = dirname(__DIR__) . '/vendor/friendsofphp/php-cs-fixer/php-cs-fixer';
-        $config = dirname(__DIR__) . '/php_cs.dist';
+        $config = dirname(__DIR__) . '/cs-fixer.php.dist';
         $command = 'fix -v --config=' . $config .' --using-cache=no --path-mode=intersection "' . $tmpFile . '"';
         echo shell_exec('php ' . $executable . ' ' . $command);
         $fixed = file_get_contents($tmpFile);

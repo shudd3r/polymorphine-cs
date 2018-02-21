@@ -16,7 +16,12 @@ use Some\Library;
 use PhpCsFixer\Fixer\ArrayNotation\ArraySyntaxFixer;
 
 
-final class ExampleClass implements SomeInterface
+/**
+ * Class MyClass summary.
+ *
+ * Description hrere....
+ */
+abstract class ExampleClass implements SomeInterface
 {
     const CONSTANT = 'string';
     public $field = [
@@ -38,6 +43,8 @@ final class ExampleClass implements SomeInterface
         return new self(implode('.', $arr));
     }
 
+    abstract public function somethingAbstract();
+
     public function GetVariable() {
         return empty($this->variable)
             ? (string) $this->variable = 'empty!' . 'string'
@@ -52,16 +59,16 @@ final class ExampleClass implements SomeInterface
         $this->variable = $library;
     }
 
-    private function getVar() {
-        if (empty($this->variable)) {
-            $this->variable = 'empty!';
-        }
+    protected function getVar2() {
+        empty($this->variable) or $this->variable = 'empty!';
 
         return $this->variable;
     }
 
-    protected function getVar2() {
-        empty($this->variable) or $this->variable = 'empty!';
+    private function getVar() {
+        if (empty($this->variable)) {
+            $this->variable = 'empty!';
+        }
 
         return $this->variable;
     }
