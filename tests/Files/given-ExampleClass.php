@@ -44,7 +44,7 @@ abstract class MyClass
     }
 
 
-    public function GetVariable() {
+    public function getVariable() {
         return empty($this->variable)
             ? (string)$this->variable = 'empty!'.'string'
             : $this->variable;
@@ -52,7 +52,7 @@ abstract class MyClass
         return new self(implode('.', $arr));
     }
 
-    public function Fixer(
+    public function fixer(
         ArraySyntaxFixer $fixer, Library $library) {
         $this->field = function () use ($fixer) { return $this->getVar(); };
         $this->variable = $library;

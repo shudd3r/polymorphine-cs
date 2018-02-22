@@ -34,8 +34,10 @@ final class ConstructorsFirstFixer extends AbstractFixer
         return new FixerDefinition(
             'Constructors should be placed before other methods.',
             [
-                new CodeSample("<?php\nclass MyClass\n{\n    private \$property;\n\n    public function doSomething() {\n    }\n\n    public function __construct() {\n    }"),
-                new CodeSample("<?php\nclass MyClass\n{\n    public function __construct() {\n    }\n\n    public function doSomething() {\n    }\n\n    public static function createWithArray() {\n    }\n}")
+                new CodeSample("<?php\nclass MyClass\n{\n    private \$property;\n\n
+    public function doSomething() {\n    }\n\n    public function __construct() {\n    }"),
+                new CodeSample("<?php\nclass MyClass\n{\n    public function __construct() {\n    }\n\n
+    public function doSomething() {\n    }\n\n    public static function createWithArray() {\n    }\n}")
             ]
         );
     }

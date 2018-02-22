@@ -45,13 +45,13 @@ abstract class ExampleClass implements SomeInterface
 
     abstract public function somethingAbstract();
 
-    public function GetVariable() {
+    public function getVariable() {
         return empty($this->variable)
             ? (string) $this->variable = 'empty!' . 'string'
             : $this->variable;
     }
 
-    public function Fixer(
+    public function fixer(
         ArraySyntaxFixer $fixer,
         Library $library
     ) {
