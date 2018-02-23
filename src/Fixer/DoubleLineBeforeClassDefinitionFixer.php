@@ -63,14 +63,17 @@ final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterfac
         }
 
         $idx++;
-        $tokens->insertAt($idx, new Token([T_WHITESPACE, self::DOUBLE_EMPTY]));
+        $spaceLines = new Token([T_WHITESPACE, self::DOUBLE_EMPTY]);
+        if ($tokens[$idx]->isWhitespace()) {
+            $tokens[$idx] = $spaceLines;
+        } else {
+            $tokens->insertAt($idx, $spaceLines);
+        }
 
-        $idx++;
-        while ($idx < $start) {
+        while ($idx++ < $start) {
             if ($tokens[$idx]->isWhitespace()) {
                 $tokens->clearAt($idx);
             }
-            $idx++;
         }
     }
 }
