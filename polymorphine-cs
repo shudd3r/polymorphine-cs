@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+namespace Polymorphine\CodeStandards;
+
+function display($output) {
+    foreach ($output as $line) {
+        echo $line . PHP_EOL;
+    }
+}
+
+function runCommand($command) {
+    exec($command, $output, $exitCode);
+    if ($exitCode) {
+        display($output);
+        exit($exitCode);
+    }
+}
+
+$src = $argv[1] ?? 'src';
+
+runCommand('phpcs --standard=' . __DIR__ . '/phpcs.xml.dist ' . $src);
+runCommand('php-cs-fixer --dry-run -v --config=cs-fixer.php.dist --path-mode=intersection fix ' . $src);
