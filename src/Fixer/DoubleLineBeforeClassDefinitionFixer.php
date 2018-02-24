@@ -21,8 +21,6 @@ use SplFileInfo;
 
 final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterface
 {
-    const DOUBLE_EMPTY = "\n\n\n";
-
     public function getName() {
         return 'Polymorphine/double_line_before_class_definition';
     }
@@ -55,24 +53,25 @@ final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterfac
     }
 
     public function fix(SplFileInfo $file, Tokens $tokens) {
-        $start = $tokens->getNextTokenOfKind(0, [[T_CLASS], [T_INTERFACE], [T_TRAIT]]);
-        $idx = $tokens->getPrevMeaningfulToken($start);
+        $definition = $tokens->getNextTokenOfKind(0, [[T_CLASS], [T_INTERFACE], [T_TRAIT]]);
+        $idx = $tokens->getPrevMeaningfulToken($definition);
         if ($tokens[$idx]->isGivenKind([T_FINAL, T_ABSTRACT])) {
-            $start = $idx;
+            $definition = $idx;
             $idx = $tokens->getPrevMeaningfulToken($idx);
         }
 
         $idx++;
-        $spaceLines = new Token([T_WHITESPACE, self::DOUBLE_EMPTY]);
+        $doubleBlank = new Token([T_WHITESPACE, "\n\n\n"]);
         if ($tokens[$idx]->isWhitespace()) {
-            $tokens[$idx] = $spaceLines;
+            $tokens[$idx] = $doubleBlank;
         } else {
-            $tokens->insertAt($idx, $spaceLines);
+            $tokens->insertAt($idx, $doubleBlank);
         }
 
-        while ($idx++ < $start) {
-            if ($tokens[$idx]->isWhitespace()) {
-                $tokens->clearAt($idx);
+        while ($idx++ < $definition) {
+            $token = &$tokens[$idx];
+            if ($token->isWhitespace() && $token->getContent() !== "\n") {
+                $token = new Token([T_WHITESPACE, "\n"]);
             }
         }
     }
