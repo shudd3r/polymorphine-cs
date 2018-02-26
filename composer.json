@@ -1,6 +1,6 @@
 {
     "name": "polymorphine/cs",
-    "description": "PHP-CS-Fixer standards for Polymorphine library",
+    "description": "Code standards check & fix scripts for Polymorphine library",
     "type": "library",
     "minimum-stability": "stable",
     "require": {
