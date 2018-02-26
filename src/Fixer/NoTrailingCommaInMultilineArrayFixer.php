@@ -21,22 +21,26 @@ use PhpCsFixer\Tokenizer\TokensAnalyzer;
 
 final class NoTrailingCommaInMultilineArrayFixer extends AbstractFixer
 {
-    public function getName() {
+    public function getName()
+    {
         return 'Polymorphine/no_trailing_comma_after_multiline_array';
     }
 
-    public function getDefinition() {
+    public function getDefinition()
+    {
         return new FixerDefinition(
             'PHP multi-line arrays should not have a trailing comma.',
             [new CodeSample("<?php\narray(\n1,\n2,\n);\n")]
         );
     }
 
-    public function isCandidate(Tokens $tokens) {
+    public function isCandidate(Tokens $tokens)
+    {
         return $tokens->isAnyTokenKindsFound([T_ARRAY, CT::T_ARRAY_SQUARE_BRACE_OPEN]);
     }
 
-    protected function applyFix(\SplFileInfo $file, Tokens $tokens) {
+    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    {
         $tokensAnalyzer = new TokensAnalyzer($tokens);
 
         for ($index = $tokens->count() - 1; $index >= 0; --$index) {
@@ -46,7 +50,8 @@ final class NoTrailingCommaInMultilineArrayFixer extends AbstractFixer
         }
     }
 
-    private function fixArray(Tokens $tokens, $index) {
+    private function fixArray(Tokens $tokens, $index)
+    {
         $startIndex = $index;
 
         if ($tokens[$startIndex]->isGivenKind(T_ARRAY)) {

@@ -21,15 +21,18 @@ use SplFileInfo;
 
 final class BraceAfterFunctionFixer implements DefinedFixerInterface
 {
-    public function getName() {
+    public function getName()
+    {
         return 'Polymorphine/brace_after_method';
     }
 
-    public function isCandidate(Tokens $tokens) {
+    public function isCandidate(Tokens $tokens)
+    {
         return $tokens->isTokenKindFound(T_FUNCTION);
     }
 
-    public function getDefinition() {
+    public function getDefinition()
+    {
         return new FixerDefinition(
             'Method definition opening brace MUST go on same line.',
             [
@@ -38,19 +41,23 @@ final class BraceAfterFunctionFixer implements DefinedFixerInterface
         );
     }
 
-    public function isRisky(): bool {
+    public function isRisky(): bool
+    {
         return false;
     }
 
-    public function supports(SplFileInfo $file): bool {
+    public function supports(SplFileInfo $file): bool
+    {
         return true;
     }
 
-    public function getPriority(): int {
+    public function getPriority(): int
+    {
         return -40;
     }
 
-    public function fix(SplFileInfo $file, Tokens $tokens) {
+    public function fix(SplFileInfo $file, Tokens $tokens)
+    {
         foreach ($tokens as $index => $token) {
             if (!$token->isGivenKind(T_FUNCTION)) {
                 continue;

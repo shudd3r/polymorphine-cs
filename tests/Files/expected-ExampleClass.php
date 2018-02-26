@@ -31,21 +31,25 @@ abstract class ExampleClass implements SomeInterface
     private $variable;
     private $bool = true;
 
-    public function __construct(string $variable = '') {
+    public function __construct(string $variable = '')
+    {
         $this->variable = $variable;
     }
 
-    public static function withHelloString() {
+    public static function withHelloString()
+    {
         return new self('Hello World!');
     }
 
-    public static function fromArray(array $arr): self {
+    public static function fromArray(array $arr): self
+    {
         return new self(implode('.', $arr));
     }
 
     abstract public function somethingAbstract();
 
-    public function getVariable() {
+    public function getVariable()
+    {
         return empty($this->variable)
             ? (string) $this->variable = 'empty!' . 'string'
             : $this->variable;
@@ -59,13 +63,15 @@ abstract class ExampleClass implements SomeInterface
         $this->variable = $library;
     }
 
-    protected function getVar2() {
+    protected function getVar2()
+    {
         empty($this->variable) or $this->variable = 'empty!';
 
         return $this->variable;
     }
 
-    private function getVar() {
+    private function getVar()
+    {
         if (empty($this->variable)) {
             $this->variable = 'empty!';
         }

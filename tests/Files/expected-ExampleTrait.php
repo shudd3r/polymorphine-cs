@@ -23,7 +23,8 @@ use PhpCsFixer\Fixer\ArrayNotation\ArraySyntaxFixer;
  */
 trait ExampleTrait
 {
-    public function getVariable() {
+    public function getVariable()
+    {
         return empty($this->variable)
             ? (string) $this->variable = 'empty!' . 'string'
             : $this->variable;
@@ -37,13 +38,15 @@ trait ExampleTrait
         $this->variable = $library;
     }
 
-    protected function getVar2() {
+    protected function getVar2()
+    {
         empty($this->variable) or $this->variable = 'empty!';
 
         return $this->variable;
     }
 
-    private function getVar() {
+    private function getVar()
+    {
         if (empty($this->variable)) {
             $this->variable = 'empty!';
         }

@@ -15,8 +15,9 @@ if ($x === 'command') {
     echo 'Allman style?';
 }
 
-    //Try something else
+    //Try something else (indentation unfixed)
 
-function doSomething($x = 3, $a = 10) {
+function doSomething($x = 3, $a = 10)
+{
     return $x + $a;
 }

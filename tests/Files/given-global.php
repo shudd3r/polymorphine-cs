@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * LOL surprise comment!
+ */
 $x = $argv[0] ?? 'command';
 
 if ($x === 'command')
@@ -8,7 +11,7 @@ if ($x === 'command')
 }
 else
 {
-    //Try something else
+    //Try something else (indentation unfixed)
 }
 
 function doSomething($x=3,$a=10)

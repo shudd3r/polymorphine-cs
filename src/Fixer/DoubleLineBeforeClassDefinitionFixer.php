@@ -21,15 +21,18 @@ use SplFileInfo;
 
 final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterface
 {
-    public function getName() {
+    public function getName()
+    {
         return 'Polymorphine/double_line_before_class_definition';
     }
 
-    public function isCandidate(Tokens $tokens) {
+    public function isCandidate(Tokens $tokens)
+    {
         return $tokens->isAnyTokenKindsFound([T_TRAIT, T_INTERFACE, T_CLASS]);
     }
 
-    public function getDefinition() {
+    public function getDefinition()
+    {
         return new FixerDefinition(
             'There MUST be exactly two blank lines before class, interface or trait definition (or preceding comment).',
             [
@@ -40,19 +43,23 @@ final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterfac
         );
     }
 
-    public function isRisky(): bool {
+    public function isRisky(): bool
+    {
         return false;
     }
 
-    public function supports(SplFileInfo $file): bool {
+    public function supports(SplFileInfo $file): bool
+    {
         return true;
     }
 
-    public function getPriority(): int {
+    public function getPriority(): int
+    {
         return -40;
     }
 
-    public function fix(SplFileInfo $file, Tokens $tokens) {
+    public function fix(SplFileInfo $file, Tokens $tokens)
+    {
         $definition = $tokens->getNextTokenOfKind(0, [[T_CLASS], [T_INTERFACE], [T_TRAIT]]);
         $idx = $tokens->getPrevMeaningfulToken($definition);
         if ($tokens[$idx]->isGivenKind([T_FINAL, T_ABSTRACT])) {

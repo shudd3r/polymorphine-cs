@@ -21,16 +21,19 @@ final class ConstructorsFirstFixer extends AbstractFixer
 {
     private $constructors = [];
 
-    public function getName() {
+    public function getName()
+    {
         return 'Polymorphine/constructors_first';
     }
 
-    public function getPriority() {
+    public function getPriority()
+    {
         //assumed one line method spacing
         return -40;
     }
 
-    public function getDefinition() {
+    public function getDefinition()
+    {
         return new FixerDefinition(
             'Constructors should be placed before other methods.',
             [
@@ -42,11 +45,13 @@ final class ConstructorsFirstFixer extends AbstractFixer
         );
     }
 
-    public function isCandidate(Tokens $tokens) {
+    public function isCandidate(Tokens $tokens)
+    {
         return $tokens->isAnyTokenKindsFound([T_CLASS]);
     }
 
-    protected function applyFix(\SplFileInfo $file, Tokens $tokens) {
+    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    {
         $this->constructors = [];
 
         $firstMethod = min(array_filter([
@@ -71,7 +76,8 @@ final class ConstructorsFirstFixer extends AbstractFixer
         $tokens->insertAt($firstMethod, Tokens::fromArray($this->constructors));
     }
 
-    private function extractMethod($idx, Tokens $tokens) {
+    private function extractMethod($idx, Tokens $tokens)
+    {
         $beginBlock = $tokens->getNextTokenOfKind($idx, ['{']);
         $endBlock = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $beginBlock) + 1;
 
@@ -82,7 +88,8 @@ final class ConstructorsFirstFixer extends AbstractFixer
         }
     }
 
-    private function getConstructorIdx(Tokens $tokens, $idx = 0) {
+    private function getConstructorIdx(Tokens $tokens, $idx = 0)
+    {
         $start = $this->getSequenceStartId([[T_PUBLIC], [T_FUNCTION], [T_STRING]], $tokens, $idx);
 
         if (!$start) {
@@ -96,7 +103,8 @@ final class ConstructorsFirstFixer extends AbstractFixer
         return $start;
     }
 
-    private function getSequenceStartId(array $sequence, Tokens $tokens, $idx = 0) {
+    private function getSequenceStartId(array $sequence, Tokens $tokens, $idx = 0)
+    {
         $sequence = $tokens->findSequence($sequence, $idx);
 
         return ($sequence) ? array_keys($sequence)[0] : null;
