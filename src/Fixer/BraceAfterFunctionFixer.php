@@ -26,7 +26,7 @@ final class BraceAfterFunctionFixer implements DefinedFixerInterface
     }
 
     public function isCandidate(Tokens $tokens) {
-        return $tokens->isAllTokenKindsFound([T_CLASS, T_FUNCTION]);
+        return $tokens->isTokenKindFound(T_FUNCTION);
     }
 
     public function getDefinition() {
