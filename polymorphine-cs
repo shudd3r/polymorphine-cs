@@ -28,5 +28,5 @@ function runCommand($command) {
 
 $src = $argv[1] ?? 'src';
 
-runCommand('phpcs --standard=' . __DIR__ . '/phpcs.xml.dist ' . $src);
+runCommand('phpcs --extensions=php --standard=' . __DIR__ . '/phpcs.xml.dist ' . $src);
 runCommand('php-cs-fixer --dry-run -v --config=cs-fixer.php.dist --path-mode=intersection fix ' . $src);

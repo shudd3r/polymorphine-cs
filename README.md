@@ -11,13 +11,15 @@ will setup PHP-CS-Fixer factory to use package name and set its working director
 Dry run (without fixes) with Composer script configured in `composer.json`:
 
     "scripts": {
-        "style-check": "polymorphine-cs src"
+        "style-check": "polymorphine-cs"
     }
 
-Perform CI checks using `.travis.yml` config:
+Perform CI checks using `.travis.yml` config. To check both `src/` and `tests/`
+directories (and their subdirectories) call script twice:
 
     script:
-      - composer style-check
+      - composer style-check src
+      - composer style-check tests
 
 
 ### IDE Setup
