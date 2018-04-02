@@ -69,6 +69,10 @@ final class ConstructorsFirstFixer extends AbstractFixer
 
         $idx = 0;
         while ($staticIdx = $this->getSequenceStartId([[T_PUBLIC], [T_STATIC], [T_FUNCTION]], $tokens, $idx)) {
+            $previous = $tokens->getPrevNonWhitespace($staticIdx);
+            if ($tokens[$previous]->isComment()) {
+                $staticIdx = $previous;
+            }
             $this->extractMethod($staticIdx, $tokens);
             $idx = $staticIdx + 5;
         }
@@ -98,6 +102,11 @@ final class ConstructorsFirstFixer extends AbstractFixer
 
         if ($tokens[$start + 4]->getContent() !== '__construct') {
             return $this->getConstructorIdx($tokens, $start + 5);
+        }
+
+        $previous = $tokens->getPrevNonWhitespace($start);
+        if ($tokens[$previous]->isComment()) {
+            $start = $previous;
         }
 
         return $start;
