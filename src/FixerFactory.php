@@ -102,7 +102,8 @@ EOF;
         'yoda_style'                                           => false,
         'Polymorphine/double_line_before_class_definition'     => true,
         'Polymorphine/no_trailing_comma_after_multiline_array' => true,
-        'Polymorphine/constructors_first'                      => true
+        'Polymorphine/constructors_first'                      => true,
+        'Polymorphine/aligned_method_chain'                    => true
     ];
 
     public static function createFor(string $packageName, string $workingDir)
@@ -117,7 +118,8 @@ EOF;
             ->registerCustomFixers([
                 new Fixer\DoubleLineBeforeClassDefinitionFixer(),
                 new Fixer\NoTrailingCommaInMultilineArrayFixer(),
-                new Fixer\ConstructorsFirstFixer()
+                new Fixer\ConstructorsFirstFixer(),
+                new Fixer\AlignedMethodChainFixer()
             ]);
     }
 }

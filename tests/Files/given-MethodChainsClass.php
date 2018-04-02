@@ -16,7 +16,7 @@ use ArrayAccess;
 use Exception;
 
 
-class ValidClass implements ArrayAccess
+class MethodChainsClass implements ArrayAccess
 {
     const TEST = 1;
 
@@ -67,9 +67,45 @@ class ValidClass implements ArrayAccess
     private function someMethod($var)
     {
         if (!$var) {
-            return null;
+            return $this->uri
+            ->withHost('example.com')
+            ->withQuery('foo=bar&baz=qux');
         }
 
         $var .= ' extended';
+    }
+
+    private function chainedCalls(UriInterface $uri)
+    {
+        $x = $this->uri->withHost('example.com')->withPort(9000)
+             ->withQuery('some=query&foo=bar');
+
+        return $x->test($x->nested('value'));
+    }
+
+    private function anotherChainedCalls(UriInterface $uri)
+    {
+        $x = $uriObject->withHost('example.com')->withPort(9000)
+            ->something()
+            ->withQuery('some=query&foo=bar');
+
+        return $x;
+    }
+
+    public function crazyStuff()
+    {
+        return function ($var) {
+            $this->call($this->uri->withHost('example.com')->withPort(9000)
+                 ->withQuery('some=query&foo=bar'))->build();
+        };
+    }
+
+    public function insaneLevel()
+    {
+        return function ($var) {
+            $this->call($this->uri->withHost('example.com')->withPort(9000)
+                 ->withQuery('some=query&foo=bar'))
+            ->iHopeItWillWork()->build();
+        };
     }
 }
