@@ -41,7 +41,6 @@ trait ExampleTrait
     protected function getVar2()
     {
         empty($this->variable) or $this->variable = 'empty!';
-
         return $this->variable;
     }
 
@@ -50,7 +49,6 @@ trait ExampleTrait
         if (empty($this->variable)) {
             $this->variable = 'empty!';
         }
-
         return $this->variable;
     }
 }

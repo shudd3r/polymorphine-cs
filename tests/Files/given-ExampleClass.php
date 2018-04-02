@@ -19,16 +19,12 @@ abstract class MyClass
 
     const CONSTANT = 'string';
     private $variable;
+
     public $field = array(
         'key' => 1,
         'other' => 'value',
     );
     private $bool = TRUE;
-
-    public function __construct(string $variable = '')
-    {
-        $this->variable = $variable;
-    }
 
     private function getVar() {
         if (empty($this->variable)) { $this->variable = 'empty!'; }
@@ -38,18 +34,35 @@ abstract class MyClass
     public static function withHelloString() {
         return new self('Hello World!');
     }
+
+
     protected function getVar2() {
         empty($this->variable) or $this->variable = 'empty!';
         return $this->variable;
-    }
-
-
-    public function getVariable() {
+    }public function getVariable() {
         return empty($this->variable)
             ? (string)$this->variable = 'empty!'.'string'
             : $this->variable;
-    }public static function fromArray(array $arr): self {
+    }
+
+
+    /**
+     * Creates from array.
+     * @param array $arr
+     * @return MyClass
+     */
+    public static function fromArray(array $arr): self {
         return new self(implode('.', $arr));
+    }
+
+    /**
+     * MyClass constructor.
+     *
+     * @param string $variable
+     */
+    public function __construct(string $variable = '')
+    {
+        $this->variable = $variable;
     }
 
     public function fixer(

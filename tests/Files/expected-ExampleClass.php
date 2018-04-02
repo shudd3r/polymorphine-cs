@@ -24,13 +24,19 @@ use PhpCsFixer\Fixer\ArrayNotation\ArraySyntaxFixer;
 abstract class ExampleClass implements SomeInterface
 {
     const CONSTANT = 'string';
+
     public $field = [
-        'key' => 1,
+        'key'   => 1,
         'other' => 'value'
     ];
     private $variable;
     private $bool = true;
 
+    /**
+     * MyClass constructor.
+     *
+     * @param string $variable
+     */
     public function __construct(string $variable = '')
     {
         $this->variable = $variable;
@@ -41,6 +47,13 @@ abstract class ExampleClass implements SomeInterface
         return new self('Hello World!');
     }
 
+    /**
+     * Creates from array.
+     *
+     * @param array $arr
+     *
+     * @return MyClass
+     */
     public static function fromArray(array $arr): self
     {
         return new self(implode('.', $arr));
@@ -66,7 +79,6 @@ abstract class ExampleClass implements SomeInterface
     protected function getVar2()
     {
         empty($this->variable) or $this->variable = 'empty!';
-
         return $this->variable;
     }
 
@@ -75,7 +87,6 @@ abstract class ExampleClass implements SomeInterface
         if (empty($this->variable)) {
             $this->variable = 'empty!';
         }
-
         return $this->variable;
     }
 }

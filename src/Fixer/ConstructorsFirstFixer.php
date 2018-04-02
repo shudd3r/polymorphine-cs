@@ -83,7 +83,7 @@ final class ConstructorsFirstFixer extends AbstractFixer
     private function extractMethod($idx, Tokens $tokens)
     {
         $beginBlock = $tokens->getNextTokenOfKind($idx, ['{']);
-        $endBlock = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $beginBlock) + 1;
+        $endBlock   = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $beginBlock) + 1;
 
         while ($idx <= $endBlock) {
             $this->constructors[] = $tokens[$idx];

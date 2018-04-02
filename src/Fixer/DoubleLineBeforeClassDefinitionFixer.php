@@ -61,10 +61,10 @@ final class DoubleLineBeforeClassDefinitionFixer implements DefinedFixerInterfac
     public function fix(SplFileInfo $file, Tokens $tokens)
     {
         $definition = $tokens->getNextTokenOfKind(0, [[T_CLASS], [T_INTERFACE], [T_TRAIT]]);
-        $idx = $tokens->getPrevMeaningfulToken($definition);
+        $idx        = $tokens->getPrevMeaningfulToken($definition);
         if ($tokens[$idx]->isGivenKind([T_FINAL, T_ABSTRACT])) {
             $definition = $idx;
-            $idx = $tokens->getPrevMeaningfulToken($idx);
+            $idx        = $tokens->getPrevMeaningfulToken($idx);
         }
 
         $idx++;
