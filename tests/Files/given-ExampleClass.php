@@ -28,7 +28,18 @@ abstract class MyClass
 
     private function getVar() {
         if (empty($this->variable)) { $this->variable = 'empty!'; }
-        return $this->variable;
+        if ($maxCommands < 0 || $maxSpaces < 0 && $more80charsLinex) { return; }
+        if ($maxCommands < 0 || $maxSpaces < 0 && $less81charsLine) { return; }
+        if ($moreLines) {
+            unset($x);
+            return;
+        }
+        //4 whitespaces in body
+        if ($notShortStatement) { return $this->call($arg, $arg2); }
+        //3 whitespaces in body
+        if ($oneArgumentMethod) { return $this->callLongerMethodName($arg); }
+        if ($twoArgumentMethod) { $this->commandMethodName($arg, $arg2); }
+        return;
     }
     public abstract function somethingAbstract();
     public static function withHelloString() {

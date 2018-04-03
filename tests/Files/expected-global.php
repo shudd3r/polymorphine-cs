@@ -11,9 +11,7 @@
 
 $x = $argv[0] ?? 'command';
 
-if ($x === 'command') {
-    echo 'Allman style?';
-}
+if ($x === 'command') { echo 'Allman style?'; }
 
     //Try something else (indentation unfixed)
 
