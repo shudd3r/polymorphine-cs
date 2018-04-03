@@ -21,6 +21,20 @@ directories (and their subdirectories) call script twice:
       - composer style-check src
       - composer style-check tests
 
+You can specify concrete files after selecting directory. Listed files located
+outside directory will be ignored. This way you can tell Travis to check only
+recently changed files:
+
+    before_script:
+      - CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRTUXB $TRAVIS_COMMIT_RANGE)
+    script:
+      - composer style-check src ${CHANGED_FILES}
+      - composer style-check tests/phpunit ${CHANGED_FILES}
+
+Style checking will be skipped if none of `CHANGED_FILES` is located within
+`src` or `tests/phpunit` directory. Command below will check only `UsernameValidation.php` file:
+
+    composer style-check src/Validation README.md src/Validation/UsernameValidation.php src/app/Config.php 
 
 ### IDE Setup
 ##### PHP-CS-Fixer
