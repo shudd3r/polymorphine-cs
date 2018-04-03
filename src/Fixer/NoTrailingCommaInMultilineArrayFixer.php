@@ -11,7 +11,7 @@
 
 namespace Polymorphine\CodeStandards\Fixer;
 
-use PhpCsFixer\AbstractFixer;
+use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\CT;
@@ -19,7 +19,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
 
 
-final class NoTrailingCommaInMultilineArrayFixer extends AbstractFixer
+final class NoTrailingCommaInMultilineArrayFixer implements DefinedFixerInterface
 {
     public function getName()
     {
@@ -34,12 +34,27 @@ final class NoTrailingCommaInMultilineArrayFixer extends AbstractFixer
         );
     }
 
+    public function isRisky()
+    {
+        return false;
+    }
+
+    public function getPriority()
+    {
+        return -40;
+    }
+
+    public function supports(\SplFileInfo $file)
+    {
+        return true;
+    }
+
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isAnyTokenKindsFound([T_ARRAY, CT::T_ARRAY_SQUARE_BRACE_OPEN]);
     }
 
-    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    public function fix(\SplFileInfo $file, Tokens $tokens)
     {
         $tokensAnalyzer = new TokensAnalyzer($tokens);
 

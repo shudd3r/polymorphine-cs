@@ -11,13 +11,14 @@
 
 namespace Polymorphine\CodeStandards\Fixer;
 
-use PhpCsFixer\AbstractFixer;
+use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Tokens;
+use SplFileInfo;
 
 
-final class ConstructorsFirstFixer extends AbstractFixer
+final class ConstructorsFirstFixer implements DefinedFixerInterface
 {
     private $constructors = [];
 
@@ -45,12 +46,22 @@ final class ConstructorsFirstFixer extends AbstractFixer
         );
     }
 
+    public function isRisky()
+    {
+        return false;
+    }
+
+    public function supports(SplFileInfo $file)
+    {
+        return true;
+    }
+
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isAnyTokenKindsFound([T_CLASS]);
     }
 
-    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    public function fix(SplFileInfo $file, Tokens $tokens)
     {
         $this->constructors = [];
 

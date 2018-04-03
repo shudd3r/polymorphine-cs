@@ -2,7 +2,7 @@
 
 namespace Polymorphine\CodeStandards\Fixer;
 
-use PhpCsFixer\AbstractFixer;
+use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
@@ -10,7 +10,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 use SplFileInfo;
 
 
-class AlignedMethodChainFixer extends AbstractFixer
+class AlignedMethodChainFixer implements DefinedFixerInterface
 {
     /**
      * @var Tokens
@@ -61,7 +61,7 @@ class AlignedMethodChainFixer extends AbstractFixer
         );
     }
 
-    protected function applyFix(\SplFileInfo $file, Tokens $tokens)
+    public function fix(SplFileInfo $file, Tokens $tokens)
     {
         $this->tokens = $tokens;
 
