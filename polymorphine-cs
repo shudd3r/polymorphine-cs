@@ -26,7 +26,23 @@ function runCommand($command) {
     }
 }
 
-$src = $argv[1] ?? 'src';
+unset($argv[0]);
 
-runCommand('phpcs --extensions=php --standard=' . __DIR__ . '/phpcs.xml.dist ' . $src);
-runCommand('php-cs-fixer --dry-run -v --config=cs-fixer.php.dist --path-mode=intersection fix ' . $src);
+$srcDir = empty($argv) ? 'src' : array_shift($argv);
+
+$files = [];
+if (!empty($argv)) {
+    foreach ($argv as $file) {
+        if (strpos($file, $srcDir) === 0) {
+            $files[] = $file;
+        }
+    }
+} else {
+    $files[] = $srcDir;
+}
+
+runCommand('phpcs --extensions=php --standard=' . __DIR__ . '/phpcs.xml.dist ' . $srcDir);
+if (!empty($files)) {
+    $src = implode(' ', $files);
+    runCommand('php-cs-fixer --dry-run -v --config=cs-fixer.php.dist --path-mode=intersection fix ' . $src);
+}
