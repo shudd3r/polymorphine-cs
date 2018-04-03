@@ -10,19 +10,17 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Polymorphine\CodeStandards;
-
-function display($output) {
-    foreach ($output as $line) {
-        echo $line . PHP_EOL;
-    }
-}
-
 function runCommand($command) {
     exec($command, $output, $exitCode);
     if ($exitCode) {
         display($output);
         exit($exitCode);
+    }
+}
+
+function display($output) {
+    foreach ($output as $line) {
+        echo $line . PHP_EOL;
     }
 }
 
@@ -41,8 +39,8 @@ if (!empty($argv)) {
     $files[] = $srcDir;
 }
 
-runCommand('phpcs --extensions=php --standard=' . __DIR__ . '/phpcs.xml.dist ' . $srcDir);
 if (!empty($files)) {
     $src = implode(' ', $files);
+    runCommand('phpcs --extensions=php --standard=' . __DIR__ . '/phpcs.xml.dist ' . $src);
     runCommand('php-cs-fixer --dry-run -v --config=cs-fixer.php.dist --path-mode=intersection fix ' . $src);
 }
