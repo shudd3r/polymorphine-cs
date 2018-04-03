@@ -79,8 +79,6 @@ final class NoTrailingCommaInMultilineArrayFixer implements DefinedFixerInterfac
         $beforeEndIndex = $tokens->getPrevMeaningfulToken($endIndex);
         $beforeEndToken = $tokens[$beforeEndIndex];
 
-        if ($beforeEndToken->equals(',')) {
-            $tokens->clearAt($beforeEndIndex);
-        }
+        if ($beforeEndToken->equals(',')) { $tokens->clearAt($beforeEndIndex); }
     }
 }

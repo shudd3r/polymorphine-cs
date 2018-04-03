@@ -59,9 +59,7 @@ final class BraceAfterFunctionFixer implements DefinedFixerInterface
     public function fix(SplFileInfo $file, Tokens $tokens)
     {
         foreach ($tokens as $index => $token) {
-            if (!$token->isGivenKind(T_FUNCTION)) {
-                continue;
-            }
+            if (!$token->isGivenKind(T_FUNCTION)) { continue; }
 
             $newlineIndex = $tokens->getNextTokenOfKind($index, ['{']) - 1;
 

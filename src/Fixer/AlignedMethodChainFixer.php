@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of Polymorphine/CodeStandards package.
+ *
+ * (c) Shudd3r <q3.shudder@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Polymorphine\CodeStandards\Fixer;
 
 use PhpCsFixer\Fixer\DefinedFixerInterface;
@@ -87,9 +96,7 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
     {
         $type = $this->tokens[$idx + 2];
 
-        if ($type->getContent() !== '(') {
-            return false;
-        }
+        if ($type->getContent() !== '(') { return false; }
 
         $next = $this->findClosing($idx + 2);
 
@@ -107,7 +114,7 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
     private function indentationToken($idx)
     {
         $lineBreakIndex = $this->findPrevLineBreak($idx);
-        $code = $this->tokens->generatePartialCode($lineBreakIndex, $idx);
+        $code           = $this->tokens->generatePartialCode($lineBreakIndex, $idx);
 
         return new Token([T_WHITESPACE, "\n" . str_repeat(' ', strlen(utf8_decode(ltrim($code, "\n"))) - 2)]);
     }
@@ -116,18 +123,14 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
     {
         $type = $this->tokens[$idx + 2];
 
-        if ($type->getContent() !== '(') {
-            return $idx;
-        }
+        if ($type->getContent() !== '(') { return $idx; }
 
         $next = $this->findClosing($idx + 2);
 
         $replace = $this->tokens[$next + 1]->isWhitespace() && $this->tokens[$next + 2]->isGivenKind(T_OBJECT_OPERATOR);
         $insert  = !$replace && $this->tokens[$next + 1]->isGivenKind(T_OBJECT_OPERATOR);
 
-        if (!$replace && !$insert) {
-            return $idx;
-        }
+        if (!$replace && !$insert) { return $idx; }
 
         if ($replace) {
             $this->tokens[$next + 1] = $indent;
