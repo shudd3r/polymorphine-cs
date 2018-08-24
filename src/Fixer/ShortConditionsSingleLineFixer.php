@@ -65,7 +65,7 @@ class ShortConditionsSingleLineFixer implements DefinedFixerInterface
                 continue;
             }
 
-            $space              = new Token(' ');
+            $space = new Token(' ');
             $tokens[$begin + 1] = $space;
             $tokens[$end - 1]   = $space;
         }
