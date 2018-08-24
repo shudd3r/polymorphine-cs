@@ -72,7 +72,7 @@ abstract class ExampleClass implements SomeInterface
         ArraySyntaxFixer $fixer,
         Library $library
     ) {
-        $this->field = function () use ($fixer) { return $this->getVar(); };
+        $this->field    = function () use ($fixer) { return $this->getVar(); };
         $this->variable = $library;
     }
 
