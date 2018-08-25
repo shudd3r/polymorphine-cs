@@ -21,9 +21,7 @@ use SplFileInfo;
 
 class AlignedMethodChainFixer implements DefinedFixerInterface
 {
-    /**
-     * @var Tokens
-     */
+    /** @var Tokens */
     private $tokens;
 
     public function getName()
@@ -63,7 +61,7 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
     public function getDefinition()
     {
         return new FixerDefinition(
-            'Multiline method chains must be alligned to object operator (arrow) of first method call.',
+            'Multiline method chains must be aligned to object operator (arrow) of first method call.',
             [
                 new CodeSample("<?php\n\$object->property->method()\n    ->anotherMethod();")
             ]
