@@ -18,8 +18,8 @@ $object->thirdValue = 3;
 $var  = 'string';
 $more = 123;
 $arr['long key value'] = 'value';
-$arr[22]               = 1;
 $array['third']        = 5;
+$arr[22] = 1;
 $val = true;
 $x = $next
     ? 1
@@ -39,8 +39,11 @@ class Some
 
     public function foo()
     {
-        $var[]     = function () {};
+        $var[]     = function () { return 'Hello World!'; };
         $another[] = null;
         $here['leave'] = 'super';
+        $here['something'] = function () {
+            return 'Hello World!';
+        };
     }
 }

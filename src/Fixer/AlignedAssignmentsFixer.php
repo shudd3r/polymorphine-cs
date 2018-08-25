@@ -21,9 +21,7 @@ use SplFileInfo;
 
 class AlignedAssignmentsFixer implements DefinedFixerInterface
 {
-    /**
-     * @var Tokens
-     */
+    /** @var Tokens */
     private $tokens;
 
     public function getName()
@@ -54,9 +52,13 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
     public function getDefinition()
     {
         return new FixerDefinition(
-            'xxx',
+            'Assignments of same type variables (variable, array key, property) in consecutive lines will be aligned.' .
+            'Only single line assignments are aligned.',
             [
-                new CodeSample('xxx')
+                new CodeSample(
+                    "<?php\n\$object->property = 'value';\n\$object->anotherProperty = 1;\n" .
+                    "\$arr['test'] = true;\n\$array['something'] = function () { return 'Hello'; };\n"
+                )
             ]
         );
     }
@@ -64,125 +66,124 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
     public function fix(SplFileInfo $file, Tokens $tokens)
     {
         $this->tokens = $tokens;
-        $siblings = [];
-        $idx      = 0;
-        while ($idx = $this->tokens->getNextTokenOfKind($idx, ['='])) {
-            if (!$this->isSingleLine($idx)) { continue; }
-            $typeIdx = $this->tokens->getNextMeaningfulToken($this->findPrevLineBreak($idx));
-            if (!$this->isPureAssignment($typeIdx)) { continue; }
-            if (!$group = $this->findSiblings($typeIdx, $idx)) { continue; }
-            $siblings[] = $group;
-            $idx = $this->getLastItem($group);
+
+        $groups = [];
+        $assign = 0;
+        while ($assign = $this->tokens->getNextTokenOfKind($assign, ['='])) {
+            $newLine = $this->nearestLineBreakIdx($assign, false);
+            if (!$this->isPureAssignment($newLine, $assign)) { continue; }
+
+            $siblings = $this->findSiblings($newLine, $assign);
+            if (!$siblings) { continue; }
+
+            $groups[] = $siblings;
+            $assign = $this->lastSiblingIdx($siblings);
         }
 
-        foreach ($siblings as $group) {
-            $this->fixGroup($group);
+        foreach ($groups as $siblings) {
+            $this->fixGroupIndentation($siblings);
         }
     }
 
-    private function fixGroup(array $tokenIds)
+    private function findSiblings($newLine, $assign)
     {
-        $maxDiff = 0;
-        $diffs   = [];
-        foreach ($tokenIds as $idx) {
-            $lineStart = $this->findPrevLineBreak($idx);
-            $code      = $this->tokens->generatePartialCode($lineStart, $idx - 1);
+        $siblings  = [];
+        $signature = $this->getTokenSignature($newLine, $assign);
 
-            $diff = strlen(utf8_decode(ltrim($code, "\n")));
-            if ($diff > $maxDiff) {
-                $maxDiff = $diff;
-            }
-            $diffs[] = [$idx, $diff];
+        $idx = $assign;
+        while ($sibling = $this->findNextSibling($idx, $signature)) {
+            $siblings[] = $sibling;
+            $idx = $sibling[0];
         }
 
-        foreach ($diffs as [$idx, $diff]) {
-            $indent = new Token([T_WHITESPACE, ' ' . str_repeat(' ', $maxDiff - $diff)]);
+        if (!$siblings) { return null; }
+
+        array_unshift($siblings, [$assign, $this->indentationPointLength($newLine, $assign)]);
+        return $siblings;
+    }
+
+    private function findNextSibling($idx, $signature)
+    {
+        $newLine = $this->nearestLineBreakIdx($idx);
+        if (!$newLine || !$this->isNextLine($newLine)) { return null; }
+
+        $assign = $this->tokens->getNextTokenOfKind($newLine, ['=']);
+        if (!$assign) { return null; }
+        if (!$this->isPureAssignment($newLine, $assign)) { return null; }
+
+        $candidateSignature = $this->getTokenSignature($newLine, $assign);
+        if ($candidateSignature !== $signature) { return null; }
+
+        return [$assign, $this->indentationPointLength($newLine, $assign)];
+    }
+
+    private function getTokenSignature($idx, $assign)
+    {
+        $signature = [];
+        while (++$idx <= $assign) {
+            $signature[] = $this->tokens[$idx]->getId();
+        }
+        return $signature;
+    }
+
+    private function indentationPointLength($newLine, $assign)
+    {
+        $code = $this->tokens->generatePartialCode($newLine, $assign - 1);
+        return strlen(utf8_decode(ltrim($code, "\n")));
+    }
+
+    private function findMaxLength(array $siblings)
+    {
+        $maxLength = 0;
+        foreach ($siblings as [$idx, $length]) {
+            if ($length <= $maxLength) { continue; }
+            $maxLength = $length;
+        }
+        return $maxLength;
+    }
+
+    private function fixGroupIndentation(array $group)
+    {
+        $maxLength = $this->findMaxLength($group);
+        foreach ($group as [$idx, $length]) {
+            $indent = new Token([T_WHITESPACE, str_repeat(' ', 1 + $maxLength - $length)]);
             $this->tokens[$idx - 1] = $indent;
         }
     }
 
-    private function findPrevLineBreak($idx)
+    private function nearestLineBreakIdx(int $idx, bool $forwardSearch = true)
     {
-        $lineBreak = $this->tokens->getPrevTokenOfKind($idx, [[T_WHITESPACE]]);
-        if ($lineBreak && strpos($this->tokens[$lineBreak]->getContent(), "\n") === false) {
-            return $this->findPrevLineBreak($lineBreak);
+        $direction = $forwardSearch ? 1 : -1;
+        do {
+            $idx = $this->tokens->getTokenOfKindSibling($idx, $direction, [[T_WHITESPACE]]);
+        } while ($idx && strpos($this->tokens[$idx]->getContent(), "\n") === false);
+
+        return $idx;
+    }
+
+    private function isPureAssignment($newLine, $assign)
+    {
+        $endLine = $this->nearestLineBreakIdx($assign);
+        if ($this->tokens[$endLine - 1]->getContent() !== ';') {
+            return false;
         }
 
-        return $lineBreak;
-    }
-
-    private function findNextLineBreak($idx)
-    {
-        $lineBreak = $this->tokens->getNextTokenOfKind($idx, [[T_WHITESPACE]]);
-        if ($lineBreak && strpos($this->tokens[$lineBreak]->getContent(), "\n") === false) {
-            return $this->findNextLineBreak($lineBreak);
+        $types = [T_VARIABLE, T_CONST, T_PUBLIC, T_PROTECTED, T_PRIVATE];
+        if (!$this->tokens[$newLine + 1]->isGivenKind($types)) {
+            return false;
         }
 
-        return $lineBreak;
+        return $assign;
     }
 
-    private function isSingleLine($idx)
-    {
-        $endStatement = $this->tokens->getNextTokenOfKind($idx, [';']);
-        $endLine      = $this->findNextLineBreak($idx);
-
-        return $endStatement < $endLine;
-    }
-
-    private function isPureAssignment($idx)
-    {
-        return $this->tokens[$idx]->isGivenKind([T_VARIABLE, T_CONST, T_PUBLIC, T_PROTECTED, T_PRIVATE]);
-    }
-
-    private function nextLine($idx)
+    private function isNextLine($idx)
     {
         return substr_count($this->tokens[$idx]->getContent(), "\n") === 1;
     }
 
-    private function findSiblings($typeIdx, $idx)
+    private function lastSiblingIdx(array $siblings)
     {
-        $siblings  = [];
-        $signature = $this->getTokenSignature($typeIdx, $idx);
-
-        $newLine = $idx;
-        while ($newLine = $this->findNextLineBreak($newLine)) {
-            if (!$this->nextLine($newLine)) { break; }
-
-            $nextType = $this->tokens->getNextMeaningfulToken($newLine);
-            if (!$this->isSingleLine($nextType) || !$this->isPureAssignment($nextType)) {
-                break;
-            }
-            if (!$assign = $this->tokens->getNextTokenOfKind($nextType, ['='])) {
-                break;
-            }
-            if ($assign - $nextType !== $idx - $typeIdx) { break; }
-            if ($this->getTokenSignature($nextType, $assign) !== $signature) {
-                break;
-            }
-
-            $siblings[] = $assign;
-        }
-
-        if ($siblings) { array_unshift($siblings, $idx); }
-        return $siblings;
-    }
-
-    private function getTokenSignature($typeIdx, $idx)
-    {
-        $signature = [];
-        $tokenIdx  = $typeIdx - 1;
-        while (($tokenIdx = $this->tokens->getNextMeaningfulToken($tokenIdx)) <= $idx) {
-            $signature[] = $this->tokens[$tokenIdx]->isGivenKind([T_CONSTANT_ENCAPSED_STRING])
-                ? T_LNUMBER
-                : $this->tokens[$tokenIdx]->getId();
-        }
-
-        if (isset($check)) { var_dump($signature); }
-        return $signature;
-    }
-
-    private function getLastItem(array $siblings)
-    {
-        return array_pop($siblings);
+        $last = array_pop($siblings);
+        return $last[0];
     }
 }
