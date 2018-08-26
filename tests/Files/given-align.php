@@ -5,6 +5,12 @@ $object->first = 1;
 $object->second = 2;
 $object->thirdValue = 3;
 
+$test = [];
+
+name($x = 'test');
+name($test[] = null);
+name($foo[] = 'foo bar baz');
+
 $var = 'string';
 $more = 123;
 $arr['long key value'] = 'value';
@@ -26,7 +32,7 @@ class Some
     private $test = 22;
     protected $x = true;
 
-    public function foo()
+    public function foo($var)
     {
         $var[] = function () { return 'Hello World!'; };
         $another[] = null;
@@ -35,4 +41,15 @@ class Some
             return 'Hello World!';
         };
     }
+
+    public function func()
+    {
+        $this->foo($default = 'test');
+        $this->foo($var = 1);
+        $this->foo($longNameVariable = 2);
+    }
+}
+
+function name($var)
+{
 }

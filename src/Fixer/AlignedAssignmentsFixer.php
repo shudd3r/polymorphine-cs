@@ -173,6 +173,11 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
             return false;
         }
 
+        $idx = $newLine;
+        while ($idx++ < $assign) {
+            if ($this->tokens[$idx]->getContent() === '(') { return false; }
+        }
+
         return $assign;
     }
 
