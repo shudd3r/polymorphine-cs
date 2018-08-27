@@ -21,6 +21,8 @@ use SplFileInfo;
 
 class AlignedAssignmentsFixer implements DefinedFixerInterface
 {
+    private const TYPES = [T_VARIABLE, T_CONST, T_PUBLIC, T_PROTECTED, T_PRIVATE];
+
     /** @var Tokens */
     private $tokens;
 
@@ -168,10 +170,7 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
             return false;
         }
 
-        $types = [T_VARIABLE, T_CONST, T_PUBLIC, T_PROTECTED, T_PRIVATE];
-        if (!$this->tokens[$newLine + 1]->isGivenKind($types)) {
-            return false;
-        }
+        if (!$this->validAssignType($newLine)) { return false; }
 
         $idx = $newLine;
         while ($idx++ < $assign) {
@@ -179,6 +178,23 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
         }
 
         return $assign;
+    }
+
+    private function validAssignType($newLine)
+    {
+        $token = $this->tokens[$newLine + 1];
+
+        if ($token->isGivenKind(T_STRING)) {
+            return $this->isStaticAssign($newLine);
+        }
+
+        return $token->isGivenKind(self::TYPES);
+    }
+
+    private function isStaticAssign($newLine)
+    {
+        $operator = $this->tokens[$newLine + 2]->isGivenKind(T_PAAMAYIM_NEKUDOTAYIM);
+        return $operator && $this->tokens[$newLine + 3]->isGivenKind(T_VARIABLE);
     }
 
     private function isNextLine($idx)

@@ -32,8 +32,13 @@ class Some
     private $test = 22;
     protected $x = true;
 
+    public static $stat;
+    public static $fooBar;
+
     public function foo($var)
     {
+        Some::$stat = 10;
+        Some::$fooBar = 20;
         $var[] = function () { return 'Hello World!'; };
         $another[] = null;
         $here['leave'] = 'super';
@@ -44,6 +49,8 @@ class Some
 
     public function func()
     {
+        self::$stat = 10;
+        self::$fooBar = 20;
         $this->foo($default = 'test');
         $this->foo($var = 1);
         $this->foo($longNameVariable = 2);
