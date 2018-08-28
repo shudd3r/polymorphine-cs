@@ -14,13 +14,14 @@ namespace Polymorphine\CodeStandards\Fixer;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
-use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use SplFileInfo;
 
 
 class AlignedAssignmentsFixer implements DefinedFixerInterface
 {
+    use FixerMethods;
+
     private const TYPES = [T_VARIABLE, T_CONST, T_PUBLIC, T_PROTECTED, T_PRIVATE];
 
     /** @var Tokens */
@@ -72,7 +73,7 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
         $groups = [];
         $assign = 0;
         while ($assign = $this->tokens->getNextTokenOfKind($assign, ['='])) {
-            $newLine = $this->nearestLineBreakIdx($assign, false);
+            $newLine = $this->prevLineBreak($assign);
             if (!$this->isPureAssignment($newLine, $assign)) { continue; }
 
             $siblings = $this->findSiblings($newLine, $assign);
@@ -106,7 +107,7 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
 
     private function findNextSibling($idx, $signature)
     {
-        $newLine = $this->nearestLineBreakIdx($idx);
+        $newLine = $this->nextLineBreak($idx);
         if (!$newLine || !$this->isNextLine($newLine)) { return null; }
 
         $assign = $this->tokens->getNextTokenOfKind($newLine, ['=']);
@@ -128,44 +129,9 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
         return $signature;
     }
 
-    private function indentationPointLength($newLine, $assign)
-    {
-        $code = $this->tokens->generatePartialCode($newLine, $assign - 1);
-        return strlen(utf8_decode(ltrim($code, "\n")));
-    }
-
-    private function findMaxLength(array $siblings)
-    {
-        $maxLength = 0;
-        foreach ($siblings as [$idx, $length]) {
-            if ($length <= $maxLength) { continue; }
-            $maxLength = $length;
-        }
-        return $maxLength;
-    }
-
-    private function fixGroupIndentation(array $group)
-    {
-        $maxLength = $this->findMaxLength($group);
-        foreach ($group as [$idx, $length]) {
-            $indent = new Token([T_WHITESPACE, str_repeat(' ', 1 + $maxLength - $length)]);
-            $this->tokens[$idx - 1] = $indent;
-        }
-    }
-
-    private function nearestLineBreakIdx(int $idx, bool $forwardSearch = true)
-    {
-        $direction = $forwardSearch ? 1 : -1;
-        do {
-            $idx = $this->tokens->getTokenOfKindSibling($idx, $direction, [[T_WHITESPACE]]);
-        } while ($idx && strpos($this->tokens[$idx]->getContent(), "\n") === false);
-
-        return $idx;
-    }
-
     private function isPureAssignment($newLine, $assign)
     {
-        $endLine = $this->nearestLineBreakIdx($assign);
+        $endLine = $this->nextLineBreak($assign);
         if ($this->tokens[$endLine - 1]->getContent() !== ';') {
             return false;
         }
@@ -195,16 +161,5 @@ class AlignedAssignmentsFixer implements DefinedFixerInterface
     {
         $operator = $this->tokens[$newLine + 2]->isGivenKind(T_PAAMAYIM_NEKUDOTAYIM);
         return $operator && $this->tokens[$newLine + 3]->isGivenKind(T_VARIABLE);
-    }
-
-    private function isNextLine($idx)
-    {
-        return substr_count($this->tokens[$idx]->getContent(), "\n") === 1;
-    }
-
-    private function lastSiblingIdx(array $siblings)
-    {
-        $last = array_pop($siblings);
-        return $last[0];
     }
 }

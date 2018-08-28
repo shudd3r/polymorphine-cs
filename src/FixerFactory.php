@@ -32,7 +32,7 @@ EOF;
         'single_line_after_imports'             => false,
         'braces'                                => ['allow_single_line_closure' => true],
         'backtick_to_shell_exec'                => true,
-        'binary_operator_spaces'                => ['operators' => ['=>' => 'align_single_space_minimal']],
+        'binary_operator_spaces'                => true,
         'blank_line_before_statement'           => false,
         'cast_spaces'                           => true,
         'align_multiline_comment'               => true,
@@ -83,14 +83,7 @@ EOF;
         'strict_param'                          => true,
         'ternary_to_null_coalescing'            => true,
         'trailing_comma_in_multiline_array'     => false,
-        'yoda_style'                            => false,
-
-        'Polymorphine/double_line_before_class_definition'     => true,
-        'Polymorphine/no_trailing_comma_after_multiline_array' => true,
-        'Polymorphine/constructors_first'                      => true,
-        'Polymorphine/aligned_method_chain'                    => true,
-        'Polymorphine/aligned_assignments'                     => true,
-        'Polymorphine/short_conditions_single_line'            => true
+        'yoda_style'                            => false
     ];
 
     public static function createFor(string $packageName, string $workingDir)
@@ -100,6 +93,14 @@ EOF;
             'break', 'continue', 'extra', 'return', 'throw', 'parenthesis_brace_block',
             'square_brace_block', 'curly_brace_block'
         ];
+
+        self::$rules['Polymorphine/double_line_before_class_definition']     = true;
+        self::$rules['Polymorphine/no_trailing_comma_after_multiline_array'] = true;
+        self::$rules['Polymorphine/constructors_first']                      = true;
+        self::$rules['Polymorphine/aligned_method_chain']                    = true;
+        self::$rules['Polymorphine/aligned_assignments']                     = true;
+        self::$rules['Polymorphine/aligned_array_values']                    = true;
+        self::$rules['Polymorphine/short_conditions_single_line']            = true;
 
         return PhpCsFixer\Config::create()
             ->setRiskyAllowed(true)
@@ -112,6 +113,7 @@ EOF;
                 new Fixer\ConstructorsFirstFixer(),
                 new Fixer\AlignedMethodChainFixer(),
                 new Fixer\AlignedAssignmentsFixer(),
+                new Fixer\AlignedArrayValuesFixer(),
                 new Fixer\ShortConditionsSingleLineFixer()
             ]);
     }

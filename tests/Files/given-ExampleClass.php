@@ -80,6 +80,33 @@ abstract class MyClass
         ArraySyntaxFixer $fixer, Library $library) {
         $this->field = function () use ($fixer) { return $this->getVar(); };
         $this->variable = $library;
+        $test = ['Set-Cookie' => [$headerLine]];
         return;
+    }
+
+    protected function cookieData()
+    {
+        return [
+            ['myCookie=; Path=/; Expires=Thursday, 02-May-2013 00:00:00 UTC; MaxAge=-157680000', [
+                'name' => 'myCookie',
+                'value' => null
+            ]],
+            ['fullCookie=foo; Domain=example.com; Path=/directory/; Expires=Tuesday, 01-May-2018 01:00:00 UTC; MaxAge=3600; Secure; HttpOnly', [
+                'name' => 'fullCookie',
+                'value' => 'foo',
+                'secure' => true,
+                'time' => 60,
+                'http' => true,
+                'domain' => 'example.com',
+                'path' => '/directory/'
+            ]],
+            ['permanentCookie=hash-3284682736487236; Expires=Sunday, 30-Apr-2023 00:00:00 UTC; MaxAge=157680000; HttpOnly', [
+                'name' => 'permanentCookie',
+                'value' => 'hash-3284682736487236',
+                'perm' => true,
+                'http' => true,
+                'path' => ''
+            ]]
+        ];
     }
 }
