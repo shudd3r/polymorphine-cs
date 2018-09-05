@@ -75,69 +75,74 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
         $this->tokens = $tokens;
 
         $idx = 0;
-        while ($next = $this->tokens->getNextTokenOfKind($idx, [[T_OBJECT_OPERATOR]])) {
-            $idx = $this->fixNext($next);
+        while ($idx = $this->findNextChain($idx)) {
+            $this->alignChain($idx, $this->indentationLength($idx));
         }
     }
 
-    private function fixNext($idx)
+    private function findNextChain($search)
     {
-        if ($this->tokens[$idx - 1]->isWhitespace() || !$this->isStartOfMultilineChain($idx)) {
-            return $idx;
-        }
+        $idx = $this->tokens->getNextTokenOfKind($search, [[T_OBJECT_OPERATOR]]);
+        if (!$idx) { return false; }
 
-        $indent = $this->indentationToken($idx);
-        $this->alignChain($idx, $indent);
+        if ($this->tokens[$idx - 1]->isWhitespace() || !$this->isStartOfMultilineChain($idx)) {
+            return $this->findNextChain($idx);
+        }
 
         return $idx;
     }
 
     private function isStartOfMultilineChain($idx)
     {
-        if ($this->tokens[$idx + 2]->getContent() !== '(') { return false; }
-
-        $next = $this->findClosing($idx + 2);
-
-        if ($this->tokens[$next + 1]->isWhitespace() && $this->tokens[$next + 2]->isGivenKind(T_OBJECT_OPERATOR)) {
+        $next = ($this->tokens[$idx + 2]->getContent() === '(') ? $this->findClosing($idx + 2) + 1 : $idx + 2;
+        if ($this->tokens[$next]->isWhitespace() && $this->tokens[$next + 1]->isGivenKind(T_OBJECT_OPERATOR)) {
             return true;
         }
 
-        if (!$this->tokens[$next + 1]->isGivenKind(T_OBJECT_OPERATOR)) {
-            return false;
-        }
-
-        return $this->isStartOfMultilineChain($next + 1);
+        return $this->tokens[$next]->isGivenKind(T_OBJECT_OPERATOR) ? $this->isStartOfMultilineChain($next) : false;
     }
 
-    private function indentationToken($idx)
+    private function indentationLength($idx): int
     {
         $lineBreak = $this->prevLineBreak($idx);
-        $code      = $this->tokens->generatePartialCode($lineBreak, $idx);
-
-        return new Token([T_WHITESPACE, "\n" . str_repeat(' ', strlen(utf8_decode(ltrim($code, "\n"))) - 2)]);
+        $code      = $this->tokens->generatePartialCode($lineBreak, $idx - 1);
+        return $this->codeLength($code);
     }
 
-    private function alignChain($idx, Token $indent)
+    private function alignChain($idx, $indent): void
     {
-        if ($this->tokens[$idx + 2]->getContent() !== '(') { return $idx; }
+        $next = $this->nextIndentation($idx + 2, $indent);
+        if (!$next) { return; }
 
-        $next    = $this->findClosing($idx + 2);
-        $newLine = $this->nextLineBreak($idx + 2);
+        $replace = $this->tokens[$next]->isWhitespace() && $this->tokens[$next + 1]->isGivenKind(T_OBJECT_OPERATOR);
+        $insert  = !$replace && $this->tokens[$next]->isGivenKind(T_OBJECT_OPERATOR);
 
-        if ($newLine < $next) { $this->indentMultilineParam($newLine, $next, $indent); }
-
-        $replace = $this->tokens[$next + 1]->isWhitespace() && $this->tokens[$next + 2]->isGivenKind(T_OBJECT_OPERATOR);
-        $insert  = !$replace && $this->tokens[$next + 1]->isGivenKind(T_OBJECT_OPERATOR);
-
-        if (!$replace && !$insert) { return $idx; }
+        if (!$replace && !$insert) { return; }
 
         if ($replace) {
-            $this->tokens[$next + 1] = $indent;
+            $this->tokens[$next] = $this->indentationToken($indent, 1);
         } else {
-            $this->tokens->insertAt($next + 1, $indent);
+            $this->tokens->insertAt($next, $this->indentationToken($indent, 1));
         }
 
-        return $this->alignChain($this->tokens->getNextTokenOfKind($next + 1, [[T_OBJECT_OPERATOR]]), $indent);
+        $idx = $this->tokens->getNextTokenOfKind($next, [[T_OBJECT_OPERATOR]]);
+        if ($idx) { $this->alignChain($idx, $indent); }
+    }
+
+    private function nextIndentation($idx, $indent)
+    {
+        if ($this->tokens[$idx]->getContent() !== '(') {
+            return $this->tokens[$idx]->isWhitespace() ? $idx : null;
+        }
+
+        $next    = $this->findClosing($idx) + 1;
+        $newLine = $this->nextLineBreak($idx);
+
+        if ($newLine < $next) {
+            $this->indentMultilineParam($newLine, $next, $indent + 4);
+        }
+
+        return $next;
     }
 
     private function findClosing($idx)
@@ -152,12 +157,11 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
         return $parenthesis;
     }
 
-    private function indentMultilineParam($idx, $end, Token $indent)
+    private function indentMultilineParam($idx, $end, $indent)
     {
-        $base     = $this->codeLength($indent->getContent()) + 4;
         $minLevel = $this->codeLength($this->tokens[$idx]->getContent());
 
-        $diff = $base - $minLevel;
+        $diff = $indent - $minLevel;
         if (!$diff) { return; }
 
         while ($idx < $end) {
@@ -168,10 +172,10 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
 
     private function fixIndent(int $length, Token $token): Token
     {
-        $code = $token->getContent();
+        $code       = $token->getContent();
         $lineBreaks = substr_count($code, "\n");
 
         $indent = $this->codeLength($code) + $length;
-        return new Token([T_WHITESPACE, str_repeat("\n", $lineBreaks) . str_repeat(' ', $indent)]);
+        return $this->indentationToken($indent, $lineBreaks);
     }
 }

@@ -88,8 +88,8 @@ class MethodChainsClass implements ArrayAccess
     {
         if (!$var) {
             return $this->uri
-                ->withHost('example.com')
-                ->withQuery('foo=bar&baz=qux');
+                        ->withHost('example.com')
+                        ->withQuery('foo=bar&baz=qux');
         }
 
         $var .= ' extended';
@@ -115,6 +115,22 @@ class MethodChainsClass implements ArrayAccess
     }
 
     private function withMultilineParams()
+    {
+        return $builder->route('name')
+                       ->get(Pattern::string('/path'))
+                       ->callback(function (Request $request) use ($container) {
+                           $id   = $request->getAttribute(ATTR);
+                           $html = $this->html('home', $container->get(ROUTER));
+
+                           return Response::html($html->render([
+                             'user'  => $id ? $container->get('user')->name() : null,
+                             'token' => $id ? $container->get('csrf.token') : null
+                           ]));
+                       })
+                       ->lastcall();
+    }
+
+    private function alignedMultilineParams()
     {
         return $builder->route('name')
                        ->get(Pattern::string('/path'))

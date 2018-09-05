@@ -50,7 +50,7 @@ EOF;
         'heredoc_to_nowdoc'                     => true,
         'increment_style'                       => false,
         'list_syntax'                           => ['syntax' => 'short'],
-        'method_chaining_indentation'           => true,
+        'method_chaining_indentation'           => false,
         'method_argument_space'                 => ['ensure_fully_multiline' => true],
         'modernize_types_casting'               => true,
         'multiline_comment_opening_closing'     => true,

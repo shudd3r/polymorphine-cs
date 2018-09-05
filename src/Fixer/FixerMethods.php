@@ -56,12 +56,16 @@ trait FixerMethods
         return strlen(utf8_decode(ltrim($code, "\n")));
     }
 
+    private function indentationToken(int $length, int $lineBreaks = 0)
+    {
+        return new Token([T_WHITESPACE, str_repeat("\n", $lineBreaks) . str_repeat(' ', $length)]);
+    }
+
     private function fixGroupIndentation(array $group)
     {
         $maxLength = $this->findMaxLength($group);
         foreach ($group as [$idx, $length]) {
-            $indent = new Token([T_WHITESPACE, str_repeat(' ', 1 + $maxLength - $length)]);
-            $this->tokens[$idx - 1] = $indent;
+            $this->tokens[$idx - 1] = $this->indentationToken($maxLength - $length + 1);
         }
     }
 
