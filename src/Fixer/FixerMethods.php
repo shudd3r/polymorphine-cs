@@ -48,6 +48,11 @@ trait FixerMethods
     private function indentationPointLength($newLine, $assign)
     {
         $code = $this->tokens->generatePartialCode($newLine, $assign - 1);
+        return $this->codeLength($code);
+    }
+
+    private function codeLength(string $code): int
+    {
         return strlen(utf8_decode(ltrim($code, "\n")));
     }
 

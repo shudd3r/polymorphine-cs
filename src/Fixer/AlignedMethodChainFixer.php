@@ -21,6 +21,8 @@ use SplFileInfo;
 
 class AlignedMethodChainFixer implements DefinedFixerInterface
 {
+    use FixerMethods;
+
     /** @var Tokens */
     private $tokens;
 
@@ -92,9 +94,7 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
 
     private function isStartOfMultilineChain($idx)
     {
-        $type = $this->tokens[$idx + 2];
-
-        if ($type->getContent() !== '(') { return false; }
+        if ($this->tokens[$idx + 2]->getContent() !== '(') { return false; }
 
         $next = $this->findClosing($idx + 2);
 
@@ -111,19 +111,20 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
 
     private function indentationToken($idx)
     {
-        $lineBreakIndex = $this->findPrevLineBreak($idx);
-        $code           = $this->tokens->generatePartialCode($lineBreakIndex, $idx);
+        $lineBreak = $this->prevLineBreak($idx);
+        $code      = $this->tokens->generatePartialCode($lineBreak, $idx);
 
         return new Token([T_WHITESPACE, "\n" . str_repeat(' ', strlen(utf8_decode(ltrim($code, "\n"))) - 2)]);
     }
 
     private function alignChain($idx, Token $indent)
     {
-        $type = $this->tokens[$idx + 2];
+        if ($this->tokens[$idx + 2]->getContent() !== '(') { return $idx; }
 
-        if ($type->getContent() !== '(') { return $idx; }
+        $next    = $this->findClosing($idx + 2);
+        $newLine = $this->nextLineBreak($idx + 2);
 
-        $next = $this->findClosing($idx + 2);
+        if ($newLine < $next) { $this->indentMultilineParam($newLine, $next, $indent); }
 
         $replace = $this->tokens[$next + 1]->isWhitespace() && $this->tokens[$next + 2]->isGivenKind(T_OBJECT_OPERATOR);
         $insert  = !$replace && $this->tokens[$next + 1]->isGivenKind(T_OBJECT_OPERATOR);
@@ -151,13 +152,26 @@ class AlignedMethodChainFixer implements DefinedFixerInterface
         return $parenthesis;
     }
 
-    private function findPrevLineBreak($idx)
+    private function indentMultilineParam($idx, $end, Token $indent)
     {
-        $lineBreak = $this->tokens->getPrevTokenOfKind($idx, [[T_WHITESPACE]]);
-        if ($lineBreak && strpos($this->tokens[$lineBreak]->getContent(), "\n") === false) {
-            return $this->findPrevLineBreak($lineBreak);
-        }
+        $base     = $this->codeLength($indent->getContent()) + 4;
+        $minLevel = $this->codeLength($this->tokens[$idx]->getContent());
 
-        return $lineBreak;
+        $diff = $base - $minLevel;
+        if (!$diff) { return; }
+
+        while ($idx < $end) {
+            $this->tokens[$idx] = $this->fixIndent($diff, $this->tokens[$idx]);
+            $idx = $this->nextLineBreak($idx);
+        }
+    }
+
+    private function fixIndent(int $length, Token $token): Token
+    {
+        $code = $token->getContent();
+        $lineBreaks = substr_count($code, "\n");
+
+        $indent = $this->codeLength($code) + $length;
+        return new Token([T_WHITESPACE, str_repeat("\n", $lineBreaks) . str_repeat(' ', $indent)]);
     }
 }

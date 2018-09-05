@@ -113,4 +113,20 @@ class MethodChainsClass implements ArrayAccess
 
         return $x;
     }
+
+    private function withMultilineParams()
+    {
+        return $builder->route('name')
+                       ->get(Pattern::string('/path'))
+                       ->callback(function (Request $request) use ($container) {
+                           $id   = $request->getAttribute(ATTR);
+                           $html = $this->html('home', $container->get(ROUTER));
+
+                           return Response::html($html->render([
+                               'user'  => $id ? $container->get('user')->name() : null,
+                               'token' => $id ? $container->get('csrf.token') : null
+                           ]));
+                       })
+                       ->lastcall();
+    }
 }
