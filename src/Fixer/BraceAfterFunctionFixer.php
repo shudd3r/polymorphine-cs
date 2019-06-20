@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * This file is part of Polymorphine/CodeStandards package.
  *
  * (c) Shudd3r <q3.shudder@gmail.com>
@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Polymorphine\CodeStandards;
+namespace Polymorphine\CodeStandards\Fixer;
 
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
@@ -21,50 +21,45 @@ use SplFileInfo;
 
 final class BraceAfterFunctionFixer implements DefinedFixerInterface
 {
-    public function getName() {
-        return 'PolymorphineCS/brace_after_function';
+    public function getName()
+    {
+        return 'Polymorphine/brace_after_method';
     }
 
-    public function isCandidate(Tokens $tokens) {
-        return $tokens->isAnyTokenKindsFound([T_CLASS, T_FUNCTION]);
+    public function isCandidate(Tokens $tokens)
+    {
+        return $tokens->isTokenKindFound(T_FUNCTION);
     }
 
-    public function getDefinition() {
+    public function getDefinition()
+    {
         return new FixerDefinition(
             'Method definition opening brace MUST go on same line.',
             [
-                new CodeSample(
-                    '<?php
-
-final class Example
-{
-    public function example() 
-    {
-    }
-}
-'
-                )
+                new CodeSample("<?php\n\nfinal class Example\n{\n    public function example()\n    {\n    }\n}")
             ]
         );
     }
 
-    public function isRisky(): bool {
+    public function isRisky(): bool
+    {
         return false;
     }
 
-    public function supports(SplFileInfo $file): bool {
+    public function supports(SplFileInfo $file): bool
+    {
         return true;
     }
 
-    public function getPriority(): int {
-        return -30;
+    public function getPriority(): int
+    {
+        return -40;
     }
 
-    public function fix(SplFileInfo $file, Tokens $tokens) {
+    public function fix(SplFileInfo $file, Tokens $tokens)
+    {
         foreach ($tokens as $index => $token) {
-            if (!$token->isGivenKind(T_FUNCTION)) {
-                continue;
-            }
+            if (!$token->isGivenKind(T_FUNCTION)) { continue; }
 
             $newlineIndex = $tokens->getNextTokenOfKind($index, ['{']) - 1;
 
