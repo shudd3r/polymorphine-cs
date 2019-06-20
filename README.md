@@ -1,4 +1,4 @@
-# Code standards check & fix scripts for Polymorphine library
+# Code standards check & fix scripts for Polymorphine libraries
 
 Combination of [PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
 and [CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) with custom

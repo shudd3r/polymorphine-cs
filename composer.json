@@ -1,6 +1,6 @@
 {
     "name": "polymorphine/cs",
-    "description": "Code standards check & fix scripts for Polymorphine library",
+    "description": "Code standards check & fix scripts for Polymorphine libraries",
     "type": "library",
     "minimum-stability": "stable",
     "require": {
