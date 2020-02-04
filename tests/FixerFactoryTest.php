@@ -20,7 +20,7 @@ class FixerFactoryTest extends TestCase
 {
     public function testConfigInstantiation()
     {
-        $filters = [fn() => true];
+        $filters = [fn () => true];
         $this->assertInstanceOf(ConfigInterface::class, FixerFactory::createFor('package/name', __DIR__, $filters));
     }
 }
