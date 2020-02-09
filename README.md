@@ -1,6 +1,6 @@
 # Polymorphine/CodeStandards
 [![Latest Stable Version](https://poser.pugx.org/polymorphine/cs/version)](https://packagist.org/packages/polymorphine/cs)
-[![Build status](https://travis-ci.org/shudd3r/polymorphine-cs.svg?branch=develop)](https://travis-ci.org/shudd3r/polymorphine-cs)
+[![Build status](https://github.com/shudd3r/polymorphine-cs/workflows/build/badge.svg)](https://github.com/shudd3r/polymorphine-cs/actions)
 [![Coverage status](https://coveralls.io/repos/github/shudd3r/polymorphine-cs/badge.svg?branch=develop)](https://coveralls.io/github/shudd3r/polymorphine-cs?branch=develop)
 [![PHP version](https://img.shields.io/packagist/php-v/polymorphine/cs.svg)](https://packagist.org/packages/polymorphine/cs)
 [![LICENSE](https://img.shields.io/github/license/shudd3r/polymorphine-cs.svg?color=blue)](LICENSE)
