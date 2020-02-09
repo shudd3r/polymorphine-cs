@@ -1,8 +1,9 @@
-name: CI checks
+name: build
 on: [push, pull_request]
 
 jobs:
-  build:
+  full-build:
+    name: "Full build - highest dependencies, coding standard checks, tests with coverage"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -47,6 +48,7 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   build-lowest:
+    name: "Lowest dependencies check - tests without coverage only"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
