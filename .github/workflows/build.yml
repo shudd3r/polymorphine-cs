@@ -22,6 +22,13 @@ jobs:
         run: composer validate
       - name: "Add coveralls dependency"
         run: composer require --dev --no-update php-coveralls/php-coveralls ^2.0
+      - name: "Setup composer cache"
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: composer-full-build-cache-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            composer-full-build-cache-
       - name: "Install dependencies (highest)"
         run: composer update --no-interaction --no-ansi --no-progress --no-suggest --prefer-stable
 
@@ -60,7 +67,13 @@ jobs:
           coverage: pcov
           extensions: dom, json, libxml, mbstring, pdo_sqlite, soap, xml, xmlwriter
           ini-values: assert.exception=1, zend.assertions=1
-
+      - name: "Setup composer cache"
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: composer-build-lowest-cache-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            composer-build-lowest-cache-
       - name: "Install dependencies (lowest)"
         run: composer update --no-interaction --no-ansi --no-progress --no-suggest --prefer-stable --prefer-lowest
       - name: "Run PhpUnit tests (no coverage)"
