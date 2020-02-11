@@ -15,7 +15,7 @@ $array['key'] = [
 $goBonkers = [
     'next' => true,
     'call' => function () {
-        return ['nasty' => 'trick', 'multiline' => 'function'];
+        return ['nasty'     => 'trick', 'multiline' => 'function'];
     },
     //skip line
     'lastLong' => true,

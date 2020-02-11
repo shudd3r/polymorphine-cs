@@ -22,7 +22,7 @@ abstract class ExampleClass
 
     public array $field = array(
         'key' => 1,
-        'other' => 'value',
+        'other'    => 'value',
     );
     private bool $bool = TRUE;
 

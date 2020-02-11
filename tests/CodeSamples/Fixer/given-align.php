@@ -38,7 +38,7 @@ class Some
     public function foo($var)
     {
         Some::$stat = 10;
-        Some::$fooBar = 20;
+        Some::$fooBar     = 20;
         $var[] = function () { return 'Hello World!'; };
         $another[] = null;
         $here['leave'] = 'super';
